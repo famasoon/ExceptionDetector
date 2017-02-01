@@ -52,6 +52,8 @@ class detector():
                     self.context.dum_regs()
                     buff = self.read_exception_instruction(self.exception_address)
                     self.print_exception_instruction(buff, self.exception_address)
+                    stack_mem = self.read_stack_memory(self.context.Esp, self.context.Ebp)
+                    self.print_stack_memory(stack_mem)
                     self.active = False
                     
 
@@ -102,5 +104,26 @@ class detector():
         exception_datas = md.disasm(data, address)
         print("[*] Exception Instruction")
         for i in md.disasm(data, address):
-            print("0x%08x:\t%s\t%s" % (i.address, i.mnemonic, i.op_str))
+            print("0x%08x:\t%s\t%s\n" % (i.address, i.mnemonic, i.op_str))
             break
+
+    def read_stack_memory(self, esp, ebp):
+        stack_size = ebp - esp
+        stack_mem = create_string_buffer(stack_size)
+        number_of_bytes_read = c_int32(0)
+        kernel32.ReadProcessMemory(self.h_process, esp, pointer(stack_mem), sizeof(stack_mem), pointer(number_of_bytes_read))
+        return stack_mem.raw
+    
+    def print_stack_memory(self, data):
+        esp = self.context.Esp
+        ebp = self.context.Ebp
+        print("[*] Stack")
+        i = 0
+        for raw_byte in data:
+            if i%8 == 0:
+                print("")
+                sys.stdout.write("0x%08x: " % esp)
+                esp += 0x8
+            sys.stdout.write("0x%02x  " % ord(raw_byte))
+            i += 1
+            
