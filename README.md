@@ -1,6 +1,8 @@
 # Exception Detector
-This project is a small exception detector.
-For windows x86 apps.
+
+## Feature
+* For x86
+* Print registers, instruction and stack dump when an exception
 
 ## Depend
 * [capstone](http://www.capstone-engine.org)
