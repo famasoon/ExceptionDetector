@@ -117,7 +117,7 @@ class detector():
     def print_stack_memory(self, data):
         esp = self.context.Esp
         ebp = self.context.Ebp
-        print("[*] Stack")
+        sys.stdout.write("[*] Stack")
         i = 0
         for raw_byte in data:
             if i%8 == 0:
