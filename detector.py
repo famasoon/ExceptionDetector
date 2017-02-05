@@ -109,6 +109,8 @@ class detector():
 
     def read_stack_memory(self, esp, ebp):
         stack_size = ebp - esp
+        if stack_size < 0:
+            stack_size = 80
         stack_mem = create_string_buffer(stack_size)
         number_of_bytes_read = c_int32(0)
         kernel32.ReadProcessMemory(self.h_process, esp, pointer(stack_mem), sizeof(stack_mem), pointer(number_of_bytes_read))
